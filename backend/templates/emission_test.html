@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero card">
+  <h1>🚗 Vehicle Emission Check</h1>
+  <p class="muted">
+    This page helps citizens understand emission checking (PUC) and encourages regular checks to reduce air pollution.
+  </p>
+</div>
+
+<div style="height:18px"></div>
+
+<div class="grid">
+  <div class="card">
+    <h2>✅ Why it matters</h2>
+    <ul class="list">
+      <li>Reduces smoke and harmful gases</li>
+      <li>Improves vehicle performance</li>
+      <li>Helps keep the city’s air cleaner</li>
+      <li>Encourages responsible driving</li>
+    </ul>
+
+    <div style="height:14px"></div>
+
+    <h2>🗓 When to do it</h2>
+    <div class="pills">
+      <div class="pill good">Recommended: every 6 months</div>
+      <div class="pill mid">Do earlier if smoke is visible</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📍 What you can add (Mini-project features)</h2>
+    <ul class="list">
+      <li>Show nearby emission test centers (manual list)</li>
+      <li>Store PUC expiry date in profile</li>
+      <li>Show reminder on dashboard before expiry</li>
+      <li>Allow municipal login to check compliance reports</li>
+    </ul>
+
+    <div style="height:12px"></div>
+
+    <a class="btn btn-primary" href="/profile">👤 Back to Profile</a>
+    <a class="btn btn-soft" href="/dashboard">📊 Dashboard</a>
+  </div>
+</div>
+
+{% endblock %}

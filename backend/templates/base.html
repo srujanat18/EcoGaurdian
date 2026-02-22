@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title if title else "EcoGuardian AI" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="bg-blobs">
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <div class="logo">🌿</div>
+        <div class="brand-title">
+          <strong>EcoGuardian</strong>
+          <span>AI</span>
+        </div>
+      </a>
+
+      <!-- Desktop links -->
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/adopt">Adopt Tree</a>
+        <a href="/municipal">Municipal</a>
+
+        {% if session.get("user_id") %}
+          <a class="cta" href="/logout">Logout</a>
+        {% else %}
+          <a href="/login">Login</a>
+          <a class="cta" href="/register">Register</a>
+        {% endif %}
+      </nav>
+
+      <!-- Mobile button -->
+      <button class="menu-btn" type="button" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <!-- Mobile dropdown -->
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/">Home</a>
+      <a href="/dashboard">Eco Monitoring Hub</a>
+
+      <a href="/adopt">Adopt Tree</a>
+      <a href="/municipal">Municipal</a>
+      <a href="/profile">Profile</a>
+      <a href="/awareness">Awareness</a>
+      <a href="/emission">Emission Test</a>
+
+      {% if session.get("user_id") %}
+        <a class="cta" href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a class="cta" href="/register">Register</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+    <footer class="footer">
+      <div><strong>EcoGuardian AI</strong> • Smart City Environmental Monitoring</div>
+      <div class="muted">Contact: ecoguardian.support@gmail.com • Municipal Collaboration Portal</div>
+    </footer>
+  </main>
+
+  <script>
+    function toggleMenu(){
+      const el = document.getElementById("mobileMenu");
+      el.classList.toggle("open");
+    }
+  </script>
+
+</body>
+</html>

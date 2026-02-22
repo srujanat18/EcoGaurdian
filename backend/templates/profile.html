@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="grid">
+  <div class="card">
+    <h2>👤 Profile</h2>
+    <p class="muted">Your EcoGuardian account and contributions.</p>
+
+    <div class="pills">
+      <div class="pill">🧑 Name: <strong>{{ name }}</strong></div>
+      <div class="pill">📧 Email: <strong>{{ email }}</strong></div>
+      <div class="pill">🏷 Role: <strong>{{ role }}</strong></div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <h3>🌳 Your Tree Adoptions</h3>
+    {% if adoptions and adoptions|length > 0 %}
+      <ul class="list">
+        {% for a in adoptions %}
+          <li>✅ {{ a[0] }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No adoptions yet. Start now!</p>
+      <a class="btn btn-primary" href="/adopt">Adopt a Tree</a>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>🏛 Citizen Services</h3>
+    <p class="muted">Quick actions supported by municipal corporation.</p>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <a class="btn btn-soft" href="/emission">🚗 Vehicle Emission Test (PUC)</a>
+      <a class="btn btn-soft" href="/municipal">📍 Report Pollution Issue</a>
+      <a class="btn btn-soft" href="/awareness">📢 Awareness & Tips</a>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <h3>✅ Suggested actions</h3>
+    <div class="pills">
+      <div class="pill good">Use public transport weekly</div>
+      <div class="pill mid">Do regular PUC check</div>
+      <div class="pill good">Plant native trees</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

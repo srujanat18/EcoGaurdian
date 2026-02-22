@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>Create Account</h2>
+  <p class="muted">Citizen or Municipal Authority can register.</p>
+
+  <form class="form" method="POST">
+    <input class="input" type="text" name="name" placeholder="Full Name" required>
+    <input class="input" type="email" name="email" placeholder="Email" required>
+    <input class="input" type="password" name="password" placeholder="Password" required>
+
+    <select name="role" required>
+      <option value="citizen">Citizen</option>
+      <option value="municipal">Municipal Authority</option>
+    </select>
+
+    <button class="btn btn-primary" type="submit">Register</button>
+    <div class="help">Already have an account? <a href="/login"><strong>Login</strong></a></div>
+  </form>
+</div>
+
+{% endblock %}

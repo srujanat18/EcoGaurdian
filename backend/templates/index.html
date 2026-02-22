@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  <h1>Cleaner Air. Greener City. 🌍</h1>
+  <p>
+    EcoGuardian AI shows live weather + pollution, predicts AQI using ML, and helps citizens adopt trees to reduce pollution.
+  </p>
+
+  <div class="hero-actions">
+    {% if session.get("user_id") %}
+      <a class="btn btn-primary" href="/dashboard">Eco Monitoring Hub</a>
+      <a class="btn btn-ghost" href="/adopt">Adopt a Tree</a>
+    {% else %}
+      <a class="btn btn-primary" href="/register">Create Account</a>
+      <a class="btn btn-ghost" href="/login">Login</a>
+    {% endif %}
+  </div>
+
+  
+</section>
+
+<div style="height:18px"></div>
+
+<div class="grid">
+  <div class="card">
+   <h3>Building a Cleaner & Greener City</h3>
+<p class="muted">
+  This project helps monitor air quality in real time and understand how clean or polluted the air is in different areas. 
+  It predicts future air conditions using intelligent analysis and encourages citizens to take part in tree plantation initiatives. 
+  By combining data insights with community action, it supports municipal authorities in making better decisions 
+  to improve environmental health and create a safer, greener city for everyone.
+</p>
+
+<div class="pills">
+  <div class="pill good">🟢 Clean air area</div>
+  <div class="pill mid">🟠 Moderate pollution area</div>
+  <div class="pill bad">🔴 High pollution risk area</div>
+</div>
+ 
+  </div>
+
+  <div class="card">
+    <h3>Quick Start</h3>
+    <p class="muted">Register → Login → Dashboard → Adopt a tree.</p>
+    <a class="btn btn-primary" href="/dashboard">Go to Dashboard</a>
+  </div>
+</div>
+
+{% endblock %}

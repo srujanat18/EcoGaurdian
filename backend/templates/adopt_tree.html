@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="grid">
+
+  <!-- 🌳 Adoption Form Card -->
+  <div class="card">
+    <h2>🌳 Tree Adoption & Plantation Initiative</h2>
+    <p class="muted">
+      Take part in building a cleaner and greener city by adopting and nurturing a tree in your locality.
+      Your small step can create long-term environmental impact.
+    </p>
+
+    <form method="POST" class="form">
+
+      <!-- Location -->
+      <label>📍 Plantation Location</label>
+      <input class="input" type="text" name="location"
+             placeholder="Enter area / ward / street name" required>
+
+      <!-- Tree Type -->
+      <label>🌲 Select Tree Type</label>
+      <select class="input" name="tree_type" required>
+        <option value="">-- Select a Tree --</option>
+
+        <option>Neem (Air Purifier & Medicinal)</option>
+        <option>Peepal (High Oxygen Release)</option>
+        <option>Banyan (Large Shade Tree)</option>
+        <option>Rain Tree (Wide Canopy)</option>
+        <option>Mango (Fruit + Shade)</option>
+        <option>Jamun (Soil & Air Improvement)</option>
+        <option>Gulmohar (Flowering Shade Tree)</option>
+      </select>
+
+      <!-- Date -->
+      <label>📅 Preferred Plantation Date</label>
+      <input class="input" type="date" name="plant_date">
+
+      <!-- Purpose -->
+      <label>📝 Purpose</label>
+      <select class="input" name="purpose">
+        <option>Air Quality Improvement</option>
+        <option>Urban Cooling & Shade</option>
+        <option>Community Green Drive</option>
+        <option>School / Awareness Campaign</option>
+      </select>
+
+      <button class="btn btn-primary" type="submit">
+        🌱 Confirm Adoption
+      </button>
+
+    </form>
+  </div>
+
+
+  <!-- 🌍 Environmental Impact Card -->
+  <div class="card">
+    <h3>📊 Estimated Environmental Impact</h3>
+    <p class="muted">
+      One mature tree can absorb up to <strong>22 kg of CO₂ per year</strong>
+      and significantly improve surrounding air quality.
+    </p>
+
+    <div class="pills">
+      <div class="pill good">🌬 Reduces Air Pollution</div>
+      <div class="pill mid">🌡 Lowers City Temperature</div>
+      <div class="pill good">🌱 Increases Oxygen Levels</div>
+    </div>
+
+    <div style="height:12px;"></div>
+
+    <div class="pill">
+      🌳 Every adoption contributes to long-term environmental sustainability.
+    </div>
+  </div>
+
+
+  <!-- 🌿 Awareness Card -->
+  <div class="card">
+    <h3>🌍 Why Tree Adoption Matters</h3>
+    <p class="muted">
+      Urban areas experience rising pollution and heat levels.
+      Planting and maintaining trees helps restore ecological balance,
+      improve public health, and create a more livable city.
+    </p>
+
+    <div class="pills">
+      <div class="pill good">🌬 Improves Air Quality</div>
+      <div class="pill mid">🌡 Reduces Urban Heat</div>
+      <div class="pill good">🐦 Supports Biodiversity</div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
