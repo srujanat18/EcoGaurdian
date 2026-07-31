@@ -1,21 +1,72 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card">
-  <h2>🏛 Municipal Dashboard</h2>
-  <p class="muted">
-    This page is for municipal monitoring & planning. (Next: show pollution table + graphs + adoption stats.)
-  </p>
+<div class="grid">
+  <div class="card">
+    <h2>Municipal Dashboard</h2>
+    <p class="muted">Monitor city incidents, citizen activity, and environmental response areas.</p>
 
-  <div class="pills">
-    <div class="pill">📌 Monitor AQI zones</div>
-    <div class="pill">📈 View trends</div>
-    <div class="pill">🌳 Track adoptions</div>
+    <div class="pills" style="margin-top:14px;">
+      <div class="pill bad">Burning reports: <strong>{{ total_reports }}</strong></div>
+      <div class="pill mid">Pending reports: <strong>{{ pending_reports }}</strong></div>
+      <div class="pill good">Tree adoptions: <strong>{{ total_adoptions }}</strong></div>
+    </div>
+
+    <div style="height:20px;"></div>
+
+    <h3>What this dashboard is for</h3>
+    <p class="muted" style="margin:0;">
+      Use this view to track reported open burning, inspect AQI on the city map,
+      and identify where action is needed first.
+    </p>
   </div>
 
-  <div style="height:12px"></div>
-  <p class="muted">Coming next: role-based access (only municipal users can view full data).</p>
+  <div class="card">
+    <h3>Quick actions</h3>
+    <div class="btn-col">
+      <a class="btn btn-primary" href="/hotspots">Open Burning Hotspots</a>
+      <a class="btn" href="/map">View AQI Map</a>
+      <a class="btn" href="/profile">Profile</a>
+    </div>
+  </div>
+</div>
 
+<div style="height:20px;"></div>
+
+<div class="card">
+  <div class="control-header">
+    <div>
+      <h3>Recent reports</h3>
+      <div class="control-sub">Latest burning reports submitted by users</div>
+    </div>
+  </div>
+
+  <div style="height:12px;"></div>
+
+  {% if recent_reports and recent_reports|length > 0 %}
+    <div style="overflow:auto;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Reported At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in recent_reports %}
+          <tr>
+            <td>{{ report["area"] }}</td>
+            <td>{{ report["status"] }}</td>
+            <td>{{ report["ts"] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">No reports available yet.</p>
+  {% endif %}
 </div>
 
 {% endblock %}

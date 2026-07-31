@@ -1,49 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero">
-  <h1>Cleaner Air. Greener City. 🌍</h1>
-  <p>
-    EcoGuardian AI shows live weather + pollution, predicts AQI using ML, and helps citizens adopt trees to reduce pollution.
+<section class="hero hero-green">
+  <div class="hero-top">
+    <div class="status-chip">
+      <span class="glow-dot"></span>
+      Live Air Quality + Community Action
+    </div>
+  </div>
+
+  <h1>Track air quality. Report issues. Make your city greener.</h1>
+
+  <p class="hero-text">
+    EcoGuardian helps people quickly check local air conditions, report open burning,
+    and contribute through tree adoption without jumping through too many screens.
   </p>
 
   <div class="hero-actions">
     {% if session.get("user_id") %}
-      <a class="btn btn-primary" href="/dashboard">Eco Monitoring Hub</a>
-      <a class="btn btn-ghost" href="/adopt">Adopt a Tree</a>
+      <a class="btn btn-primary btn-lg" href="/dashboard">Open Dashboard</a>
+      <a class="btn btn-ghost btn-lg" href="/report-burning">Report Burning</a>
     {% else %}
-      <a class="btn btn-primary" href="/register">Create Account</a>
-      <a class="btn btn-ghost" href="/login">Login</a>
+      <a class="btn btn-primary btn-lg" href="/register">Create Account</a>
+      <a class="btn btn-primary btn-lg" href="/login">Login</a>
     {% endif %}
   </div>
-
-  
 </section>
 
 <div style="height:18px"></div>
 
 <div class="grid">
   <div class="card">
-   <h3>Building a Cleaner & Greener City</h3>
-<p class="muted">
-  This project helps monitor air quality in real time and understand how clean or polluted the air is in different areas. 
-  It predicts future air conditions using intelligent analysis and encourages citizens to take part in tree plantation initiatives. 
-  By combining data insights with community action, it supports municipal authorities in making better decisions 
-  to improve environmental health and create a safer, greener city for everyone.
-</p>
-
-<div class="pills">
-  <div class="pill good">🟢 Clean air area</div>
-  <div class="pill mid">🟠 Moderate pollution area</div>
-  <div class="pill bad">🔴 High pollution risk area</div>
-</div>
- 
+    <h3>What you can do</h3>
+    <div class="pills" style="margin-top:10px;">
+      <div class="pill">Check live AQI in your area</div>
+      <div class="pill">Report open burning with photo</div>
+      <div class="pill">Adopt and track trees</div>
+    </div>
   </div>
 
   <div class="card">
-    <h3>Quick Start</h3>
-    <p class="muted">Register → Login → Dashboard → Adopt a tree.</p>
-    <a class="btn btn-primary" href="/dashboard">Go to Dashboard</a>
+    <h3>Simple flow</h3>
+    <ol class="steps">
+      <li>Create an account</li>
+      <li>Open the dashboard</li>
+      <li>Use one main action: check AQI, report burning, or adopt a tree</li>
+      <li>Track your contributions in profile and hotspots</li>
+    </ol>
   </div>
 </div>
 

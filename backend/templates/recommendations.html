@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>✅ Action Recommendations</h2>
+  <p class="muted">Based on predicted air condition for <b>{{ city }}</b>.</p>
+
+  <div class="pills">
+    <div class="pill"><b>Predicted Level:</b> {{ predicted }}</div>
+    <div class="pill"><b>Category:</b> {{ level }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Recommended Actions</h3>
+  <ul>
+    {% for t in tips %}
+      <li style="margin:8px 0;">{{ t }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}

@@ -1,77 +1,108 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{{ title if title else "EcoGuardian AI" }}</title>
+  <title>{{ title if title else "EcoGuardian" }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
-<body class="bg-blobs">
-
-  <header class="navbar">
-    <div class="nav-inner">
+<body class="bg">
+  <header class="topbar">
+    <div class="topbar-inner">
       <a class="brand" href="/">
-        <div class="logo">🌿</div>
-        <div class="brand-title">
-          <strong>EcoGuardian</strong>
-          <span>AI</span>
+        <div class="brand-logo">🌿</div>
+        <div class="brand-text">
+          <div class="brand-name">EcoGuardian</div>
+          <div class="brand-tagline">Air quality monitoring and citizen action</div>
         </div>
       </a>
 
-      <!-- Desktop links -->
-      <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/adopt">Adopt Tree</a>
-        <a href="/municipal">Municipal</a>
-
+      <div class="topbar-actions">
         {% if session.get("user_id") %}
-          <a class="cta" href="/logout">Logout</a>
+          {% if session.get("role") == "municipal" %}
+            <a class="btn btn-ghost" href="/municipal-dashboard">Municipal Dashboard</a>
+          {% else %}
+            <a class="btn btn-ghost" href="/citizen-dashboard">Dashboard</a>
+          {% endif %}
+          <a class="btn btn-primary" href="/profile">Profile</a>
         {% else %}
-          <a href="/login">Login</a>
-          <a class="cta" href="/register">Register</a>
+          <a class="btn btn-ghost" href="/login">Login</a>
+          <a class="btn btn-primary" href="/register">Create account</a>
         {% endif %}
-      </nav>
+      </div>
 
-      <!-- Mobile button -->
-      <button class="menu-btn" type="button" onclick="toggleMenu()">☰</button>
+      <button class="menu-btn" type="button" onclick="toggleMenu()" aria-label="Open menu">☰</button>
     </div>
 
-    <!-- Mobile dropdown -->
-    <div id="mobileMenu" class="mobile-menu">
-      <a href="/">Home</a>
-      <a href="/dashboard">Eco Monitoring Hub</a>
-
-      <a href="/adopt">Adopt Tree</a>
-      <a href="/municipal">Municipal</a>
-      <a href="/profile">Profile</a>
-      <a href="/awareness">Awareness</a>
-      <a href="/emission">Emission Test</a>
+    <nav class="navline">
+      <a href="/" class="nav-link">Home</a>
 
       {% if session.get("user_id") %}
+        {% if session.get("role") == "municipal" %}
+          <a href="/municipal-dashboard" class="nav-link">Municipal Dashboard</a>
+          <a href="/map" class="nav-link">AQI Map</a>
+          <a href="/hotspots" class="nav-link">Burning Hotspots</a>
+          <a href="/profile" class="nav-link">Profile</a>
+        {% else %}
+          <a href="/citizen-dashboard" class="nav-link">Dashboard</a>
+          <a href="/map" class="nav-link">Map</a>
+          <a href="/report-burning" class="nav-link">Report Burning</a>
+          <a href="/adopt" class="nav-link">Adopt Tree</a>
+          <a href="/profile" class="nav-link">Profile</a>
+        {% endif %}
+      {% endif %}
+    </nav>
+
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/">Home</a>
+
+      {% if session.get("user_id") %}
+        {% if session.get("role") == "municipal" %}
+          <a href="/municipal-dashboard">Municipal Dashboard</a>
+          <a href="/map">AQI Map</a>
+          <a href="/hotspots">Burning Hotspots</a>
+          <a href="/profile">Profile</a>
+        {% else %}
+          <a href="/citizen-dashboard">Dashboard</a>
+          <a href="/map">Map</a>
+          <a href="/report-burning">Report Burning</a>
+          <a href="/adopt">Adopt Tree</a>
+          <a href="/profile">Profile</a>
+        {% endif %}
         <a class="cta" href="/logout">Logout</a>
       {% else %}
         <a href="/login">Login</a>
-        <a class="cta" href="/register">Register</a>
+        <a class="cta" href="/register">Create account</a>
       {% endif %}
     </div>
   </header>
 
   <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
+          {% for category, message in messages %}
+            <div class="pill {% if category == 'error' %}bad{% elif category == 'success' %}good{% elif category == 'warning' %}mid{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
+
     <footer class="footer">
-      <div><strong>EcoGuardian AI</strong> • Smart City Environmental Monitoring</div>
-      <div class="muted">Contact: ecoguardian.support@gmail.com • Municipal Collaboration Portal</div>
+      <div><strong>EcoGuardian</strong> • Environmental Monitoring Project</div>
+      <div class="muted">Live AQI, reports, hotspots, and tree adoption</div>
     </footer>
   </main>
 
   <script>
-    function toggleMenu(){
+    function toggleMenu() {
       const el = document.getElementById("mobileMenu");
       el.classList.toggle("open");
     }
   </script>
-
 </body>
 </html>

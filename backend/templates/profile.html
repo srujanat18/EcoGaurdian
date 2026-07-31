@@ -3,48 +3,55 @@
 
 <div class="grid">
   <div class="card">
-    <h2>👤 Profile</h2>
-    <p class="muted">Your EcoGuardian account and contributions.</p>
+    <h2>My Profile</h2>
+    <p class="muted">Your account details and contribution history.</p>
 
     <div class="pills">
-      <div class="pill">🧑 Name: <strong>{{ name }}</strong></div>
-      <div class="pill">📧 Email: <strong>{{ email }}</strong></div>
-      <div class="pill">🏷 Role: <strong>{{ role }}</strong></div>
+      <div class="pill">Name: <strong>{{ user["name"] }}</strong></div>
+      <div class="pill">Email: <strong>{{ user["email"] }}</strong></div>
+      <div class="pill">Role: <strong>{{ user["role"] }}</strong></div>
     </div>
 
-    <div style="height:14px"></div>
+    <div style="height:18px"></div>
 
-    <h3>🌳 Your Tree Adoptions</h3>
-    {% if adoptions and adoptions|length > 0 %}
-      <ul class="list">
-        {% for a in adoptions %}
-          <li>✅ {{ a[0] }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="muted">No adoptions yet. Start now!</p>
-      <a class="btn btn-primary" href="/adopt">Adopt a Tree</a>
-    {% endif %}
+    <div class="btn-col">
+      <a class="btn btn-primary" href="/dashboard">Back to Dashboard</a>
+      <a class="btn" href="/adopt">Adopt a Tree</a>
+      <a class="btn" href="/report-burning">Report Burning</a>
+      <a class="btn" href="/hotspots">View Hotspots</a>
+    </div>
   </div>
 
   <div class="card">
-    <h3>🏛 Citizen Services</h3>
-    <p class="muted">Quick actions supported by municipal corporation.</p>
+    <h3>My Tree Adoptions</h3>
 
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <a class="btn btn-soft" href="/emission">🚗 Vehicle Emission Test (PUC)</a>
-      <a class="btn btn-soft" href="/municipal">📍 Report Pollution Issue</a>
-      <a class="btn btn-soft" href="/awareness">📢 Awareness & Tips</a>
-    </div>
-
-    <div style="height:14px"></div>
-
-    <h3>✅ Suggested actions</h3>
-    <div class="pills">
-      <div class="pill good">Use public transport weekly</div>
-      <div class="pill mid">Do regular PUC check</div>
-      <div class="pill good">Plant native trees</div>
-    </div>
+    {% if adoptions and adoptions|length > 0 %}
+      <div style="overflow:auto;">
+        <table class="table" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">District</th>
+              <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Area</th>
+              <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Tree</th>
+              <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Plant Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in adoptions %}
+            <tr>
+              <td style="padding:10px; border-bottom:1px solid var(--border);">{{ row["district"] }}</td>
+              <td style="padding:10px; border-bottom:1px solid var(--border);">{{ row["area"] }}</td>
+              <td style="padding:10px; border-bottom:1px solid var(--border);">{{ row["tree_type"] }}</td>
+              <td style="padding:10px; border-bottom:1px solid var(--border);">{{ row["plant_date"] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">You have not adopted any trees yet.</p>
+      <a class="btn btn-primary" href="/adopt">Adopt Your First Tree</a>
+    {% endif %}
   </div>
 </div>
 

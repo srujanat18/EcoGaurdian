@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="grid">
+  <div class="card">
+    <h2>Air Quality Map</h2>
+
+    <div id="map" style="height:520px; border-radius:16px;"></div>
+
+    <div id="statusBox" class="pill" style="margin-top:12px;">
+      Loading...
+    </div>
+
+    <!-- ✅ AQI LEGEND ADDED HERE -->
+    <div style="
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-size: 14px;
+    ">
+      <b>AQI Color Legend</b>
+
+      <table style="width:100%; margin-top:10px; border-collapse: collapse; text-align:center;">
+        <tr>
+          <th style="padding:8px;">AQI</th>
+          <th style="padding:8px;">Color</th>
+          <th style="padding:8px;">Label</th>
+        </tr>
+
+        <tr>
+          <td>1</td>
+          <td style="background:#22c55e; color:white;">Green</td>
+          <td>Good</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+          <td style="background:#facc15;">Yellow</td>
+          <td>Fair</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td style="background:#f59e0b;">Orange</td>
+          <td>Moderate</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+          <td style="background:#ef4444; color:white;">Red</td>
+          <td>Poor</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+          <td style="background:#7e22ce; color:white;">Purple</td>
+          <td>Very Poor</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const map = L.map("map").setView([13.34, 77.10], 11);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+let myLat = null;
+let myLon = null;
+
+const zoneLayer = L.layerGroup().addTo(map);
+const myLayer = L.layerGroup().addTo(map);
+const inspectLayer = L.layerGroup().addTo(map);
+
+const statusBox = document.getElementById("statusBox");
+
+/* ---------- HELPERS ---------- */
+
+function getColor(aqi) {
+  return ["#22c55e", "#facc15", "#f59e0b", "#ef4444", "#7e22ce"][aqi - 1] || "#9ca3af";
+}
+
+function getLabel(aqi) {
+  return ["Good", "Fair", "Moderate", "Poor", "Very Poor"][aqi - 1] || "Unknown";
+}
+
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+/* ---------- MERGE SAVED POINTS ---------- */
+
+function mergeNearby(points) {
+  const grid = {};
+
+  points.forEach(p => {
+    const key = `${Number(p.lat).toFixed(2)}_${Number(p.lon).toFixed(2)}`;
+
+    if (!grid[key]) {
+      grid[key] = { ...p, count: 1 };
+    } else {
+      grid[key].aqi += p.aqi;
+      grid[key].count += 1;
+    }
+  });
+
+  return Object.values(grid).map(p => ({
+    ...p,
+    aqi: Math.round(p.aqi / p.count)
+  }));
+}
+
+/* ---------- DRAW SAVED SCAN ZONES ---------- */
+
+function drawZones(points) {
+  zoneLayer.clearLayers();
+
+  const cleaned = mergeNearby(points)
+    .filter(p => myLat === null || distanceKm(myLat, myLon, p.lat, p.lon) <= 15)
+    .slice(0, 60);
+
+  cleaned.forEach(p => {
+    const dist = myLat ? distanceKm(myLat, myLon, p.lat, p.lon) : 10;
+    const fade = Math.max(0.2, 1 - dist / 15);
+
+    const jitter = 0.002;
+    const lat = Number(p.lat) + (Math.random() - 0.5) * jitter;
+    const lon = Number(p.lon) + (Math.random() - 0.5) * jitter;
+
+    const circle = L.circle([lat, lon], {
+      color: getColor(p.aqi),
+      fillColor: getColor(p.aqi),
+      fillOpacity: 0.22 * fade,
+      opacity: 0.80 * fade,
+      weight: 2,
+      radius: 400
+    }).addTo(zoneLayer);
+
+    circle.bindPopup(`
+      <b>Saved Scan Zone</b><br>
+      AQI (saved): <b>${p.aqi}</b> (${getLabel(p.aqi)})<br>
+      This is from previously saved scan data.
+    `);
+  });
+
+  if (cleaned.length > 0) {
+    statusBox.innerHTML = `Showing <b>${cleaned.length}</b> saved scan zones near your location`;
+  } else {
+    statusBox.innerText = "No nearby saved scan zones available.";
+  }
+}
+
+/* ---------- LOCATION ---------- */
+
+function detectLocation() {
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      myLat = pos.coords.latitude;
+      myLon = pos.coords.longitude;
+
+      myLayer.clearLayers();
+
+      const icon = L.icon({
+        iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+      });
+
+      const marker = L.marker([myLat, myLon], { icon }).addTo(myLayer);
+      marker.bindPopup("<b>You are here</b>").openPopup();
+
+      L.circle([myLat, myLon], {
+        color: "#2563eb",
+        fillColor: "#60a5fa",
+        fillOpacity: 0.20,
+        opacity: 0.9,
+        weight: 2,
+        radius: 400
+      }).addTo(myLayer);
+
+      map.setView([myLat, myLon], 12);
+      loadZones();
+    },
+    () => {
+      statusBox.innerText = "Location blocked. Showing default zones.";
+      loadZones();
+    }
+  );
+}
+
+/* ---------- LOAD SAVED DATA ---------- */
+
+async function loadZones() {
+  try {
+    const res = await fetch("/api/aqi-zones");
+    const data = await res.json();
+    drawZones(data);
+  } catch (e) {
+    statusBox.innerText = "Failed to load saved scan zones";
+  }
+}
+
+/* ---------- CLICK FOR LIVE AQI ---------- */
+
+async function inspectAQIAtPoint(lat, lon) {
+  inspectLayer.clearLayers();
+  statusBox.innerText = "Checking live AQI...";
+
+  try {
+    const res = await fetch(`/api/aqi-now?lat=${lat}&lon=${lon}`);
+    const data = await res.json();
+
+    if (data.error) {
+      statusBox.innerText = "Could not fetch live AQI";
+      return;
+    }
+
+    const color = getColor(data.aqi);
+
+    L.circleMarker([lat, lon], {
+      radius: 8,
+      color: color,
+      fillColor: color,
+      fillOpacity: 1,
+      weight: 2
+    }).addTo(inspectLayer);
+
+    L.circle([lat, lon], {
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.28,
+      opacity: 0.9,
+      weight: 2,
+      radius: 400
+    }).addTo(inspectLayer);
+
+    L.popup()
+      .setLatLng([lat, lon])
+      .setContent(`
+        <b>Live AQI Now</b><br>
+        AQI: <b>${data.aqi}</b> (${getLabel(data.aqi)})<br>
+        PM2.5: ${data.pm25}<br>
+        PM10: ${data.pm10}
+      `)
+      .openOn(map);
+
+    statusBox.innerHTML = `Live AQI here: <b>${data.aqi}</b> (${getLabel(data.aqi)})`;
+  } catch (e) {
+    statusBox.innerText = "Error fetching live AQI";
+  }
+}
+
+map.on("click", function(e) {
+  inspectAQIAtPoint(e.latlng.lat, e.latlng.lng);
+});
+
+/* ---------- INIT ---------- */
+
+detectLocation();
+
+</script>
+
+{% endblock %}

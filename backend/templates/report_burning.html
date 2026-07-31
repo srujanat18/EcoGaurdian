@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>Report Open Burning</h2>
+  <p class="muted">Submit one clear report with location and photo. After submission, you can track it in Hotspots.</p>
+</div>
+
+<div class="card">
+  <form method="POST" enctype="multipart/form-data" class="form">
+    <label>Area / Location</label>
+    <input class="input" name="area" placeholder="Example: Maralur, Tumakuru" required>
+
+    <label>Upload Photo</label>
+    <input class="input" type="file" name="photo" accept="image/*" required>
+
+    <label>Short note (optional)</label>
+    <input class="input" name="note" placeholder="Example: Smoke near roadside garbage point">
+
+    <button class="btn btn-primary" type="submit">Submit Report</button>
+  </form>
+</div>
+
+{% endblock %}

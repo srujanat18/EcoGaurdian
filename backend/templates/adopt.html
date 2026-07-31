@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>Adopt a Tree</h2>
+  <p class="muted">Fill in the details once. After submission, your record will appear in your profile.</p>
+</div>
+
+<div class="card">
+  <form method="POST" class="form">
+    <label>District</label>
+    <select class="input" name="district" id="district" required>
+      <option value="">Select district</option>
+      {% for district in districts %}
+        <option value="{{ district }}">{{ district }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Area</label>
+    <select class="input" name="area" id="area" required>
+      <option value="">Select area</option>
+    </select>
+
+    <label>Exact location (optional)</label>
+    <input class="input" type="text" name="location" placeholder="Street, park, school, ward..." />
+
+    <label>Tree type</label>
+    <input class="input" type="text" name="tree_type" placeholder="Neem, Peepal, Mango..." required />
+
+    <label>Planting date</label>
+    <input class="input" type="date" name="plant_date" required />
+
+    <label>Purpose (optional)</label>
+    <input class="input" type="text" name="purpose" placeholder="School drive, home garden, roadside planting..." />
+
+    <button class="btn btn-primary" type="submit">Submit Adoption</button>
+  </form>
+</div>
+
+<script>
+document.getElementById("district").addEventListener("change", async function () {
+  const district = this.value;
+  const areaSelect = document.getElementById("area");
+  areaSelect.innerHTML = '<option value="">Loading...</option>';
+
+  if (!district) {
+    areaSelect.innerHTML = '<option value="">Select area</option>';
+    return;
+  }
+
+  const res = await fetch("/api/areas-by-district?district=" + encodeURIComponent(district));
+  const areas = await res.json();
+
+  areaSelect.innerHTML = '<option value="">Select area</option>';
+  areas.forEach(function(area) {
+    const option = document.createElement("option");
+    option.value = area;
+    option.textContent = area;
+    areaSelect.appendChild(option);
+  });
+});
+</script>
+
+{% endblock %}

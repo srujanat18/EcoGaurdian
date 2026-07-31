@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <div class="control-header">
+    <div>
+      <h2>Burning Hotspots</h2>
+      <div class="control-sub">Recent reports submitted by users</div>
+    </div>
+    <a class="btn btn-primary" href="/report-burning">New Report</a>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div id="map" style="height:500px; border-radius:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h3>Recent Reports</h3>
+    <div id="reportList" class="report-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const map = L.map("map").setView([13.3409, 77.1010], 10);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+async function loadReports() {
+  const res = await fetch("/api/burn-reports");
+  const data = await res.json();
+
+  const listDiv = document.getElementById("reportList");
+  listDiv.innerHTML = "";
+
+  if (!Array.isArray(data) || data.length === 0) {
+    listDiv.innerHTML = '<div class="pill">No reports yet.</div>';
+    return;
+  }
+
+  const bounds = [];
+
+  data.forEach(r => {
+    const marker = L.circleMarker([r.lat, r.lon], {
+      radius: 8,
+      color: "red",
+      fillColor: "orange",
+      fillOpacity: 0.9
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <strong>${r.area}</strong><br>
+      ${r.note || "No note"}<br>
+      ML: ${r.label} (${r.confidence})<br>
+      Status: ${r.status}<br>
+      ${r.ts}
+    `);
+
+    bounds.push([r.lat, r.lon]);
+
+    const div = document.createElement("div");
+    div.className = "pill bad";
+    div.innerHTML = `
+      <strong>${r.area}</strong><br>
+      ${r.note || "No note"}<br>
+      <span class="muted">Status: ${r.status} • ${r.ts}</span>
+    `;
+    listDiv.appendChild(div);
+  });
+
+  if (bounds.length > 0) {
+    map.fitBounds(bounds, { padding: [30, 30] });
+  }
+}
+
+loadReports();
+</script>
+
+{% endblock %}

@@ -28,12 +28,29 @@ CREATE TABLE IF NOT EXISTS pollution (
 
 # Trees Table
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS trees (
+CREATE TABLE IF NOT EXISTS adopt_tree(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
+    district TEXT,
+    area TEXT,
     location TEXT,
     tree_type TEXT,
-    date TEXT
+    plant_date TEXT,
+    purpose TEXT
+)
+""")
+cur.execute("""
+CREATE TABLE IF NOT EXISTS districts(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE
+)
+""")
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS areas(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  district TEXT,
+  name TEXT
 )
 """)
 

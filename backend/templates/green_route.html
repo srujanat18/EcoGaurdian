@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>🧭 Green Route Navigator</h2>
+  <p class="muted">Find a route with lower pollution (demo scoring).</p>
+</div>
+
+<div class="card">
+  <div class="grid">
+    <div>
+      <label>Start Latitude</label>
+      <input class="input" id="start_lat" placeholder="13.34">
+      <label>Start Longitude</label>
+      <input class="input" id="start_lon" placeholder="77.12">
+    </div>
+    <div>
+      <label>End Latitude</label>
+      <input class="input" id="end_lat" placeholder="13.00">
+      <label>End Longitude</label>
+      <input class="input" id="end_lon" placeholder="77.60">
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+  <button class="btn btn-primary" onclick="scoreRoute()">Find Best Route</button>
+
+  <div style="height:14px"></div>
+  <div id="result" class="pill"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="card">
+  <div id="routeMap" style="height:520px; border-radius:16px;"></div>
+</div>
+
+<script src="{{ url_for('static', filename='route.js') }}"></script>
+
+{% endblock %}

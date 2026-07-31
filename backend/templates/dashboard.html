@@ -1,145 +1,131 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="grid">
-
-  <!-- LEFT MAIN CARD -->
+{% if data_unavailable %}
   <div class="card">
-    <h2>🌿 Eco Monitoring Hub</h2>
-    <p class="muted">EcoGuardian Control Panel</p>
-    <div class="control-header">
-  <div class="control-title">
-    <h2>🌿 Eco Monitoring Hub</h2>
-    <div class="control-sub">EcoGuardian Control Panel • City Operations View</div>
-    <div class="muted" style="font-weight:800; margin-top:6px;">
-      Location: <strong>{{ city }}</strong>
-    </div>
-  </div>
-
-  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
-    <div class="badge-live">
-      <span class="dot"></span>
-      LIVE
-    </div>
-    <div class="muted" style="font-weight:800; font-size:12px;">
-      Updated: <strong>{{ last_updated }}</strong>
-    </div>
-  </div>
-</div>
-
-    <p class="muted">City: <strong>{{ city }}</strong></p>
-
-    <div class="pills">
-      <div class="pill">🌡 Temperature: {{ temperature }} °C</div>
-      <div class="pill">💧 Humidity: {{ humidity }}%</div>
-      <div class="pill">☁ Weather: {{ description }}</div>
-    </div>
-
-    <div style="height:18px"></div>
-
-    <h3>🌫 Air Quality</h3>
-    <div class="pills">
-      <div class="pill">🌫 Fine Dust Level: {{ pm25 }}</div>
-      <div class="pill">🌪 Dust Level: {{ pm10 }}</div>
-      <div class="pill">📍 Current Air Condition: {{ actual_aqi }}</div>
-      <div class="pill"><strong>🧠 Predicted Condition: {{ predicted_aqi }}</strong></div>
-    </div>
-
-    <div class="help">
-      Fine Dust = very small dust particles. Dust Level = larger dust particles.
-    </div>
-
-    <div style="height:20px"></div>
-
-    <!-- ✅ GRAPH SECTION -->
-    <h3>📈 Air Quality Trend (Last 7 Days)</h3>
-    <p class="muted" style="margin-top:10px;">
-      This graph shows how air quality changed in your area over the past week.
-    </p>
-    <div class="graph-frame" style="margin-top:10px;">
-  <img src="{{ url_for('static', filename='pollution_trend.png') }}?v={{ cache_bust }}"
-       alt="Air quality trend">
-</div>
-
-    <div style="height:20px"></div>
-
-    <!-- FUTURE PREDICTION -->
-    <h3>🔮 Next 3 Days Prediction</h3>
-
-{% if forecast and forecast|length > 0 %}
-  <div class="pills">
-    {% for d in forecast %}
-      <div class="pill">
-        <strong>{{ d["day"] }}</strong><br>
-        Predicted Level: {{ d["pred"] }}
-      </div>
-    {% endfor %}
+    <h2>Citizen Dashboard</h2>
+    <p class="muted">We could not load live air data right now.</p>
+    <a class="btn btn-primary" href="/citizen-dashboard">Try Again</a>
   </div>
 {% else %}
-  <div class="pill mid">⚠ Prediction data not available yet.</div>
-{% endif %}
 
-    <div style="height:15px"></div>
-
-    <!-- STATUS MESSAGE -->
-    {% if predicted_aqi > 150 %}
-      <div class="pill bad">🔴 Air quality is unhealthy — Avoid outdoor activity</div>
-    {% elif predicted_aqi > 80 %}
-      <div class="pill mid">🟠 Air quality is moderate — Mask recommended</div>
-    {% else %}
-      <div class="pill good">🟢 Air quality is good — Safe to go outside</div>
-    {% endif %}
-
-  </div>
-
-
-  <!-- RIGHT SIDE ACTION CARD -->
+<div class="grid">
   <div class="card">
-    <h3>Actions</h3>
-    <p class="muted">Take action to improve your environment.</p>
+    <div class="control-header">
+      <div class="control-title">
+        <h2>Citizen Dashboard</h2>
+        <div class="control-sub">{{ city }}</div>
+      </div>
 
-    <a class="btn btn-primary" href="/adopt">🌳 Adopt a Tree</a>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+        <div class="badge-live">
+          <span class="dot"></span>
+          LIVE
+        </div>
+        <div class="muted" style="font-size:12px;">
+          Updated: <strong>{{ last_updated }}</strong>
+        </div>
+      </div>
+    </div>
 
-    <div style="height:10px"></div>
+    <div style="height:18px;"></div>
 
-    <a class="btn" href="/municipal">🏛 Municipal View</a>
+    <div class="pill {{ live_status.tone }}" style="font-size:16px; padding:14px 18px;">
+      Current air status: <strong>{{ live_status.label }}</strong>
+    </div>
 
-    <div style="height:20px"></div>
+    <div style="height:10px;"></div>
 
-    <h3>Change City Manually</h3>
-    <form class="form" method="GET" action="/dashboard">
-      <input class="input" name="city" placeholder="Type city name (e.g., Mysuru)" />
-      <button class="btn btn-primary" type="submit">Update</button>
-      <div class="help">Use correct spelling (Bengaluru / Mysuru / Delhi).</div>
-    </form>
+    <p class="muted" style="margin:0;">
+      {{ live_status.message }}
+    </p>
+
+    <div style="height:18px;"></div>
+
+    <h3 style="margin-bottom:8px;">Live air now</h3>
+    <div class="pills">
+      <div class="pill">AQI: <strong>{{ actual_aqi }}</strong></div>
+      <div class="pill">PM2.5: <strong>{{ pm25 }}</strong></div>
+      <div class="pill">PM10: <strong>{{ pm10 }}</strong></div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <h3 style="margin-bottom:8px;">Weather</h3>
+    <div class="pills">
+      <div class="pill">Temperature: <strong>{{ temperature }}°C</strong></div>
+      <div class="pill">Humidity: <strong>{{ humidity }}%</strong></div>
+      <div class="pill">Condition: <strong>{{ description }}</strong></div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <h3 style="margin-bottom:8px;">Forecast</h3>
+    <p class="muted" style="margin:0 0 10px 0;">
+      This section is forecast only. Live status is shown above.
+    </p>
+
+    <div class="pills">
+      <div class="pill">Predicted next AQI: <strong>{{ predicted_aqi }}</strong></div>
+      {% for d in forecast %}
+        <div class="pill">
+          <strong>{{ d.day }}</strong>: {{ d.pred }}
+        </div>
+      {% endfor %}
+    </div>
   </div>
 
+  <div class="card">
+    <h3>Main actions</h3>
+    <p class="muted">Choose what you want to do next.</p>
+
+    <div class="btn-col">
+      <a class="btn btn-primary" href="/map">Open AQI Map</a>
+      <a class="btn" href="/report-burning">Report Open Burning</a>
+      <a class="btn" href="/adopt">Adopt a Tree</a>
+      <a class="btn" href="/profile">My Profile</a>
+    </div>
+
+    <div style="height:20px;"></div>
+
+    <h3>Change location</h3>
+    <form class="form" method="GET" action="/citizen-dashboard">
+      <input class="input" name="city" placeholder="Enter city name" />
+      <button class="btn btn-primary" type="submit">Update City</button>
+      <div class="help">Or use your current location.</div>
+    </form>
+
+    <div style="height:12px;"></div>
+
+    <div class="pill" id="gpsBox" style="display:none;">
+      Location access is blocked. You can still search by city.
+    </div>
+
+    <button class="btn btn-soft" type="button" onclick="useMyLocation()">Use My Current Location</button>
+  </div>
 </div>
 
-<!-- ✅ AUTO LOCATION SCRIPT -->
 <script>
-(function() {
-  const params = new URLSearchParams(window.location.search);
-
-  // If no GPS parameters, show "Detecting..." and redirect once.
-  if (!params.has("lat") && navigator.geolocation) {
-    document.body.style.opacity = "0.65";
-
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        window.location.replace("/dashboard?lat=" + lat + "&lon=" + lon);
-      },
-      function(err) {
-        console.log("GPS blocked:", err);
-        // If user blocks location, keep page without redirect
-        document.body.style.opacity = "1";
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+function useMyLocation() {
+  if (!navigator.geolocation) {
+    document.getElementById("gpsBox").style.display = "block";
+    return;
   }
-})();
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      window.location.href = "/citizen-dashboard?lat=" + lat + "&lon=" + lon;
+    },
+    function() {
+      document.getElementById("gpsBox").style.display = "block";
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
 </script>
+
+{% endif %}
 
 {% endblock %}
